@@ -20,7 +20,7 @@ class Folder extends FS
      *
      * @return bool
      */
-    public function exists()
+    public function exists() : bool
     {
         return is_dir($this->path);
     }
