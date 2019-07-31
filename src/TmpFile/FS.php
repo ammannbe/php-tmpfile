@@ -43,6 +43,16 @@ abstract class FS implements Contract
     }
 
     /**
+     * Get the object path, when converting the object to a string
+     * 
+     * @return string
+     */
+    public function __toString() : string
+    {
+        return $this->getPath();
+    }
+
+    /**
      * Get the full object path
      *
      * @return string
