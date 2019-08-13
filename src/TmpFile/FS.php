@@ -2,10 +2,12 @@
 
 namespace TmpFile;
 
+use TmpFile\Contracts\FSContract;
+
 /**
  * Base class to create temporary files and folders
  */
-abstract class FS implements Contract
+abstract class FS implements FSContract
 {
     /** @var string|null Should contain the full object path */
     protected $path;

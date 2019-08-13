@@ -1,11 +1,11 @@
 <?php
 
-namespace TmpFile;
+namespace TmpFile\Contracts;
 
 /**
  * Contract to create temporary files and folders
  */
-interface Contract
+interface FSContract
 {
     /**
      * Create new instance

@@ -2,10 +2,12 @@
 
 namespace TmpFile;
 
+use TmpFile\Contracts\FileContract;
+
 /**
  * Create Temporary Files
  */
-class File extends FS
+class File extends FS implements FileContract
 {
     /**
      * Create new instance
@@ -20,6 +22,9 @@ class File extends FS
         $tmpPath = $tmpPath ?? sys_get_temp_dir();
         $command = "mktemp -p {$tmpPath} {$name}.XXXXXX";
         $this->path = trim(`{$command} 2>/dev/null`);
+        if (! $this->exists()) {
+            throw new \Exception("Could not create file '{$name}' in {$tmpPath}");
+        }
     }
 
     /**
