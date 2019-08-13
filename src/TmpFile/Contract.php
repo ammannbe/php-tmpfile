@@ -10,19 +10,32 @@ interface Contract
     /**
      * Create new instance
      *
-     * @param string $name
+     * @param string $name = null
+     * @param string $tmpPath = null
+     * @return void
      */
-    public function __construct(string $name);
+    public function __construct(string $name = null, string $tmpPath = null);
 
     /**
      * Destroy object and delete it from the filesystem
+     *
+     * @return void
      */
     public function __destruct();
 
     /**
-     * Destroy object and delete it from the filesystem
+     * Get the object path, when converting the object to a string
+     *
+     * @return string
      */
-    public function delete();
+    public function __toString() : string;
+
+    /**
+     * Destroy object and delete it from the filesystem
+     *
+     * @return void
+     */
+    public function delete() : void;
 
     /**
      * Check if object exists

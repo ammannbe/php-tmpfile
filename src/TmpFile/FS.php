@@ -7,37 +7,15 @@ namespace TmpFile;
  */
 abstract class FS implements Contract
 {
-    /**
-     * System temp directory
-     */
-    protected $tmpDir;
-
-    /**
-     * The full object path
-     */
+    /** @var string|null Should contain the full object path */
     protected $path;
 
     /**
-     * Create new instance
-     *
-     * @param string $name
-     */
-    public function __construct(string $name)
-    {
-        $this->tmpDir = sys_get_temp_dir();
-
-        if ($this instanceOf File) {
-            $command = "mktemp -p {$this->tmpDir} {$name}.XXXXXX";
-        } else {
-            $command = "mktemp -d -p {$this->tmpDir} {$name}.XXXXXX";
-        }
-        $this->path = trim(`{$command}`);
-    }
-
-    /**
      * Destroy object and delete it from the filesystem
+     *
+     * @return void
      */
-    public function delete()
+    public function delete() : void
     {
         $this->__destruct();
     }

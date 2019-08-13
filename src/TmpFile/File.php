@@ -8,7 +8,24 @@ namespace TmpFile;
 class File extends FS
 {
     /**
+     * Create new instance
+     *
+     * @param string $name = null
+     * @param string $tmpPath = null
+     * @return void
+     */
+    public function __construct(string $name = null, string $tmpPath = null)
+    {
+        if (! $name) { $name = time(); }
+        $tmpPath = $tmpPath ?? sys_get_temp_dir();
+        $command = "mktemp -p {$tmpPath} {$name}.XXXXXX";
+        $this->path = trim(`{$command} 2>/dev/null`);
+    }
+
+    /**
      * Destroy object and delete it from the filesystem
+     *
+     * @return void
      */
     public function __destruct()
     {
@@ -28,13 +45,14 @@ class File extends FS
     /**
      * Get the file content
      *
-     * @return string
+     * @return string|false
      */
-    public function read() : string
+    public function read()
     {
         if ($this->exists()) {
             return file_get_contents($this->path);
         }
+        return false;
     }
 
     /**
@@ -48,11 +66,7 @@ class File extends FS
      */
     public function write($data)
     {
-        if ($this->exists()) {
-            return file_put_contents($this->path, $data);
-        } else {
-            return false;
-        }
+        return file_put_contents($this->path, $data);
     }
 
     /**
@@ -82,11 +96,7 @@ class File extends FS
      */
     public function append($data)
     {
-        if ($this->exists()) {
-            return file_put_contents($this->path, $data, FILE_APPEND);
-        } else {
-            return false;
-        }
+        return file_put_contents($this->path, $data, FILE_APPEND);
     }
 
     /**
@@ -102,6 +112,6 @@ class File extends FS
     public function appendArray(array $data)
     {
         // "\n" must be in double quotation marks to create a correct line wrap
-        return $this->append(implode("\n", $data));
+        return $this->append("\n" . implode("\n", $data));
     }
 }
