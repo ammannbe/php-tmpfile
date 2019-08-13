@@ -67,11 +67,15 @@ class File extends FS implements FileContract
      *
      * @see write_put_contents()
      * @param mixed $data Content to write
-     * @return int|false
+     * @return bool
      */
-    public function write($data)
+    public function write($data) : bool
     {
-        return file_put_contents($this->path, $data);
+        if (!$this->exists() || file_put_contents($this->path, $data) === false) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -82,9 +86,9 @@ class File extends FS implements FileContract
      * @see File::write();
      * @see write_put_contents()
      * @param array $data Array to write
-     * @return int|false
+     * @return bool
      */
-    public function writeArray(array $data)
+    public function writeArray(array $data) : bool
     {
         // "\n" must be in double quotation marks to create a correct line wrap
         return $this->write(implode("\n", $data));
@@ -97,11 +101,15 @@ class File extends FS implements FileContract
      *
      * @see write_put_contents()
      * @param mixed $data Content to write
-     * @return int|false
+     * @return bool
      */
-    public function append($data)
+    public function append($data) : bool
     {
-        return file_put_contents($this->path, $data, FILE_APPEND);
+        if (!$this->exists() || file_put_contents($this->path, $data, FILE_APPEND) === false) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -112,9 +120,9 @@ class File extends FS implements FileContract
      * @see File::append();
      * @see write_put_contents()
      * @param array $data Array to write
-     * @return int|false
+     * @return bool
      */
-    public function appendArray(array $data)
+    public function appendArray(array $data) : bool
     {
         // "\n" must be in double quotation marks to create a correct line wrap
         return $this->append("\n" . implode("\n", $data));

@@ -21,9 +21,9 @@ interface FileContract extends FSContract
      *
      * @see write_put_contents()
      * @param mixed $data Content to write
-     * @return int|false
+     * @return bool
      */
-    public function write($data);
+    public function write($data) : bool;
 
     /**
      * Write array to the file
@@ -33,9 +33,9 @@ interface FileContract extends FSContract
      * @see File::write();
      * @see write_put_contents()
      * @param array $data Array to write
-     * @return int|false
+     * @return bool
      */
-    public function writeArray(array $data);
+    public function writeArray(array $data) : bool;
 
     /**
      * Append content to the file
@@ -44,9 +44,9 @@ interface FileContract extends FSContract
      *
      * @see write_put_contents()
      * @param mixed $data Content to write
-     * @return int|false
+     * @return bool
      */
-    public function append($data);
+    public function append($data) : bool;
 
     /**
      * Append array to the file
@@ -56,7 +56,7 @@ interface FileContract extends FSContract
      * @see File::append();
      * @see write_put_contents()
      * @param array $data Array to write
-     * @return int|false
+     * @return bool
      */
-    public function appendArray(array $data);
+    public function appendArray(array $data) : bool;
 }
