@@ -7,5 +7,4 @@ namespace TmpFile\Contracts;
  */
 interface FolderContract extends FSContract
 {
-
 }

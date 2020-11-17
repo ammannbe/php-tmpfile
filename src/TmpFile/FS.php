@@ -9,7 +9,11 @@ use TmpFile\Contracts\FSContract;
  */
 abstract class FS implements FSContract
 {
-    /** @var string|null Should contain the full object path */
+    /**
+     * The full object path
+     *
+     * @var string
+     */
     protected $path;
 
     /**
@@ -17,17 +21,17 @@ abstract class FS implements FSContract
      *
      * @return void
      */
-    public function delete() : void
+    public function delete(): void
     {
         $this->__destruct();
     }
 
     /**
-     * Get the object path, when converting the object to a string
-     * 
+     * Get the full object path
+     *
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->getPath();
     }
@@ -37,7 +41,7 @@ abstract class FS implements FSContract
      *
      * @return string
      */
-    public function getPath() : string
+    public function getPath(): string
     {
         return $this->path;
     }

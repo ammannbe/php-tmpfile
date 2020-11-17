@@ -3,134 +3,122 @@
 namespace TmpFile\Tests;
 
 use TmpFile\File;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for temporary files
  */
-class FileTest extends TestCase
+class FileTest extends FSTest
 {
-    public function name()
-    {
-        return 'test';
-    }
-
-    public function path()
-    {
-        return '/test';
-    }
-
     /**
-     * @test
+     * @return void
      */
-    public function canCreateFile()
+    public function testCanCreateFile(): void
     {
         $file = new File();
         $this->assertTrue($file->exists());
-        return $file;
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canCreateFileWithName()
+    public function testCanCreateFileWithName(): void
     {
         $file = new File('test');
         $this->assertTrue($file->exists());
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotCreateFileWithName()
+    public function testCannotCreateFileWithName(): void
     {
         $this->expectException(\Exception::class);
         new File('/this-is-a-very-long-fake-path-which-should-not-exists/test');
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canCreateFileWithPath()
+    public function testCanCreateFileWithPath(): void
     {
         $file = new File(null, '/tmp');
         $this->assertTrue($file->exists());
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotCreateFileWithPath()
+    public function testCannotCreateFileWithPath(): void
     {
         $this->expectException(\Exception::class);
         new File(null, '/this-is-a-very-long-fake-path-which-should-not-exists');
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canCreateFileWithNameAndPath()
+    public function testCanCreateFileWithNameAndPath(): void
     {
         $file = new File('test', '/tmp');
         $this->assertTrue($file->exists());
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotCreateFileWithNameAndPath()
+    public function testCannotCreateFileWithNameAndPath(): void
     {
         $this->expectException(\Exception::class);
         new File('test', '/this-is-a-very-long-fake-path-which-should-not-exists');
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canConvertPathToString()
+    public function testCanConvertPathToString(): void
     {
         $file = new File();
         $this->assertEquals($file->getPath(), (string) $file);
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canReadFromFile()
+    public function testCanReadFromFile(): void
     {
         $file = new File();
         file_put_contents($file->getPath(), "Some test text");
         $this->expectOutputString('Some test text');
-        print $file->read("Some test text");
+        print($file->read());
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotReadFromFile()
+    public function testCannotReadFromFile(): void
     {
         $file = new File();
         file_put_contents($file->getPath(), "Some test text");
         @unlink($file);
-        $this->assertFalse($file->read());
+        $this->assertEmpty($file->read());
     }
 
     /**
-     * @test
+     * @return \TmpFile\File
      */
-    public function canWriteDataToFile()
+    public function testCanWriteDataToFile(): \TmpFile\File
     {
         $file = new File();
         $file->write("Some test text");
         $this->expectOutputString('Some test text');
-        print file_get_contents($file->getPath());
+        print(file_get_contents($file->getPath()));
         return $file;
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotWriteDataToFile()
+    public function testCannotWriteDataToFile(): void
     {
         $file = new File();
         @unlink($file);
@@ -138,68 +126,64 @@ class FileTest extends TestCase
     }
 
     /**
-     * @test
-     * @depends canWriteDataToFile
+     * @depends testCanWriteDataToFile
      */
-    public function canAppendDataToFile(File $file)
+    public function testCanAppendDataToFile(File $file): void
     {
-        $file->append("\nSome other test text");
-        $this->expectOutputString('Some test text'.PHP_EOL.'Some other test text');
-        print file_get_contents($file->getPath());
+        $file->write("\nSome other test text", false);
+        $this->expectOutputString('Some test text' . PHP_EOL . 'Some other test text');
+        print(file_get_contents($file->getPath()));
+    }
+
+    /**
+     * @return void
+     */
+    public function testCannotAppendDataToFile(): void
+    {
+        $file = new File();
+        @unlink($file);
+        $this->assertFalse($file->write("Some test text", false));
+    }
+
+    /**
+     * @return \TmpFile\File
+     */
+    public function testCanWriteArrayToFile(): \TmpFile\File
+    {
+        $file = new File();
+        $file->write(['Some', 'test', 'text']);
+        $this->expectOutputString('Some' . PHP_EOL . 'test' . PHP_EOL . 'text');
+        print(file_get_contents($file->getPath()));
         return $file;
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotAppendDataToFile()
+    public function testCannotWriteArrayToFile(): void
     {
         $file = new File();
         @unlink($file);
-        $this->assertFalse($file->append("Some test text"));
+        $this->assertFalse($file->write(['Some', 'test', 'text']));
     }
 
     /**
-     * @test
+     * @depends testCanWriteArrayToFile
      */
-    public function canWriteArrayToFile()
+    public function testCanAppendArrayToFile(File $file): void
     {
-        $file = new File();
-        $file->writeArray(['Some', 'test', 'text']);
-        $this->expectOutputString('Some'.PHP_EOL.'test'.PHP_EOL.'text');
-        print file_get_contents($file->getPath());
-        return $file;
+        $file->write(['', 'Some', 'other', 'test', 'text'], false);
+        $this->expectOutputString('Some' . PHP_EOL . 'test' . PHP_EOL . 'text' . PHP_EOL . 'Some' . PHP_EOL . 'other' . PHP_EOL . 'test' . PHP_EOL . 'text');
+        print(file_get_contents($file->getPath()));
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotWriteArrayToFile()
-    {
-        $file = new File();
-        @unlink($file);
-        $this->assertFalse($file->writeArray(['Some', 'test', 'text']));
-    }
-
-    /**
-     * @test
-     * @depends canWriteArrayToFile
-     */
-    public function canAppendArrayToFile(File $file)
-    {
-        $file->appendArray(['Some', 'other', 'test', 'text']);
-        $this->expectOutputString('Some'.PHP_EOL.'test'.PHP_EOL.'text'.PHP_EOL.'Some'.PHP_EOL.'other'.PHP_EOL.'test'.PHP_EOL.'text');
-        print file_get_contents($file->getPath());
-        return $file;
-    }
-
-    /**
-     * @test
-     */
-    public function cannotAppendArrayToFile()
+    public function testCannotAppendArrayToFile(): void
     {
         $file = new File();
         @unlink($file);
-        $this->assertFalse($file->appendArray(['Some', 'other', 'test', 'text']));
+        $this->assertFalse($file->write(['Some', 'other', 'test', 'text'], false));
     }
 }

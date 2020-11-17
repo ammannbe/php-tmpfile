@@ -3,91 +3,79 @@
 namespace TmpFile\Tests;
 
 use TmpFile\Folder;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for temporary folders
  */
-class FolderTest extends TestCase
+class FolderTest extends FSTest
 {
-    public function name()
-    {
-        return 'test';
-    }
-
-    public function path()
-    {
-        return '/test';
-    }
-
     /**
-     * @test
+     * @return void
      */
-    public function canCreateFolder()
+    public function testCanCreateFolder(): void
     {
         $folder = new Folder();
         $this->assertTrue($folder->exists());
-        return $folder;
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canCreateFolderWithName()
+    public function testCanCreateFolderWithName(): void
     {
         $folder = new Folder('test');
         $this->assertTrue($folder->exists());
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotCreateFolderWithName()
+    public function testCannotCreateFolderWithName(): void
     {
         $this->expectException(\Exception::class);
         new Folder('/this-is-a-very-long-fake-path-which-should-not-exists/test');
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canCreateFolderWithPath()
+    public function testCanCreateFolderWithPath(): void
     {
         $folder = new Folder(null, '/tmp');
         $this->assertTrue($folder->exists());
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotCreateFolderWithPath()
+    public function testCannotCreateFolderWithPath(): void
     {
         $this->expectException(\Exception::class);
         new Folder(null, '/this-is-a-very-long-fake-path-which-should-not-exists');
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canCreateFolderWithNameAndPath()
+    public function testCanCreateFolderWithNameAndPath(): void
     {
         $folder = new Folder('test', '/tmp');
         $this->assertTrue($folder->exists());
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function cannotCreateFolderWithNameAndPath()
+    public function testCannotCreateFolderWithNameAndPath(): void
     {
         $this->expectException(\Exception::class);
         new Folder('test', '/this-is-a-very-long-fake-path-which-should-not-exists');
     }
 
     /**
-     * @test
+     * @return void
      */
-    public function canConvertPathToString()
+    public function testCanConvertPathToString(): void
     {
         $folder = new Folder();
         $this->assertEquals($folder->getPath(), (string) $folder);

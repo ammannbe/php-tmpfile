@@ -12,26 +12,32 @@ class Folder extends FS implements FolderContract
     /**
      * Create new instance
      *
-     * @param string $name = null
-     * @param string $tmpPath = null
+     * @param  string|null  $name  Folder name
+     * @param  string|null  $path  Temporary path
      */
-    public function __construct(string $name = null, string $tmpPath = null)
+    public function __construct(string $name = null, string $path = null)
     {
-        if (! $name) { $name = time(); }
-        $tmpPath = $tmpPath ?? sys_get_temp_dir();
-        $command = "mktemp -d -p {$tmpPath} {$name}.XXXXXX";
+        if (!$name) {
+            $name = time();
+        }
+
+        $path = $path ?? sys_get_temp_dir();
+        $command = "mktemp -d -p {$path} {$name}.XXXXXX";
         $this->path = trim(`{$command} 2>/dev/null`);
-        if (! $this->exists()) {
-            throw new \Exception("Could not create file '{$name}' in {$tmpPath}");
+
+        if (!$this->exists()) {
+            throw new \Exception("Could not create file '{$name}' in {$path}");
         }
     }
 
     /**
      * Destroy object and delete it from the filesystem
+     *
+     * @return void
      */
     public function __destruct()
     {
-        system('rm -rf '.escapeshellarg($this->path).' &>/dev/null');
+        system('rm -rf ' . escapeshellarg($this->path) . ' &>/dev/null');
     }
 
     /**
@@ -39,7 +45,7 @@ class Folder extends FS implements FolderContract
      *
      * @return bool
      */
-    public function exists() : bool
+    public function exists(): bool
     {
         return is_dir($this->path);
     }

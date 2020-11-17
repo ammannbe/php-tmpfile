@@ -28,26 +28,26 @@ interface FSContract
      *
      * @return string
      */
-    public function __toString() : string;
+    public function __toString(): string;
 
     /**
      * Destroy object and delete it from the filesystem
      *
      * @return void
      */
-    public function delete() : void;
+    public function delete(): void;
 
     /**
      * Check if object exists
      *
      * @return bool
      */
-    public function exists() : bool;
+    public function exists(): bool;
 
     /**
      * Get the full object path
      *
      * @return string
      */
-    public function getPath() : string;
+    public function getPath(): string;
 }

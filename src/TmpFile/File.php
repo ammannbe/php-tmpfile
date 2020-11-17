@@ -12,18 +12,22 @@ class File extends FS implements FileContract
     /**
      * Create new instance
      *
-     * @param string $name = null
-     * @param string $tmpPath = null
+     * @param  string|null  $name  Folder name
+     * @param  string|null  $path  Temporary path
      * @return void
      */
-    public function __construct(string $name = null, string $tmpPath = null)
+    public function __construct(string $name = null, string $path = null)
     {
-        if (! $name) { $name = time(); }
-        $tmpPath = $tmpPath ?? sys_get_temp_dir();
-        $command = "mktemp -p {$tmpPath} {$name}.XXXXXX";
+        if (!$name) {
+            $name = time();
+        }
+
+        $path = $path ?? sys_get_temp_dir();
+        $command = "mktemp -p {$path} {$name}.XXXXXX";
         $this->path = trim(`{$command} 2>/dev/null`);
-        if (! $this->exists()) {
-            throw new \Exception("Could not create file '{$name}' in {$tmpPath}");
+
+        if (!$this->exists()) {
+            throw new \Exception("Could not create file '{$name}' in {$path}");
         }
     }
 
@@ -42,7 +46,7 @@ class File extends FS implements FileContract
      *
      * @return bool
      */
-    public function exists() : bool
+    public function exists(): bool
     {
         return is_file($this->path);
     }
@@ -50,81 +54,39 @@ class File extends FS implements FileContract
     /**
      * Get the file content
      *
-     * @return string|false
+     * @return string
      */
-    public function read()
+    public function read(): string
     {
         if ($this->exists()) {
-            return file_get_contents($this->path);
+            return file_get_contents($this->path) ?: '';
         }
-        return false;
+
+        return '';
     }
 
     /**
      * Write content to the file
-     * 
+     *
      * This method overwrites existing content in the file
      *
-     * @see write_put_contents()
-     * @param mixed $data Content to write
+     * @see    file_put_contents()
+     * @param  string|array<string>|resource  $data  Content to write
+     * @param  bool  $overwrite  Overwrite instead of append
      * @return bool
      */
-    public function write($data) : bool
+    public function write($data, bool $overwrite = true): bool
     {
-        if (!$this->exists() || file_put_contents($this->path, $data) === false) {
-            return false;
-        } else {
+        if (is_array($data)) {
+            // "\n" must be in double quotation marks to create a correct line wrap
+            $data = implode("\n", $data);
+        }
+
+        $flags = $overwrite ? 0 : FILE_APPEND;
+        if ($this->exists() && file_put_contents($this->path, $data, $flags) !== false) {
             return true;
         }
-    }
 
-    /**
-     * Write array to the file
-     *
-     * Write each array value to a new line
-     *
-     * @see File::write();
-     * @see write_put_contents()
-     * @param array $data Array to write
-     * @return bool
-     */
-    public function writeArray(array $data) : bool
-    {
-        // "\n" must be in double quotation marks to create a correct line wrap
-        return $this->write(implode("\n", $data));
-    }
-
-    /**
-     * Append content to the file
-     * 
-     * This method will not overwrite any existing content in the file
-     *
-     * @see write_put_contents()
-     * @param mixed $data Content to write
-     * @return bool
-     */
-    public function append($data) : bool
-    {
-        if (!$this->exists() || file_put_contents($this->path, $data, FILE_APPEND) === false) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Append array to the file
-     *
-     * Write each array value to a new line
-     *
-     * @see File::append();
-     * @see write_put_contents()
-     * @param array $data Array to write
-     * @return bool
-     */
-    public function appendArray(array $data) : bool
-    {
-        // "\n" must be in double quotation marks to create a correct line wrap
-        return $this->append("\n" . implode("\n", $data));
+        return false;
     }
 }
